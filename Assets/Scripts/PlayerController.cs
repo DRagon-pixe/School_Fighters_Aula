@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -12,6 +13,11 @@ public class PlayerController : MonoBehaviour
 
     // Player olhando para a direita
     private bool playerFacingRight = true;
+
+    int punchCount;
+    private float timeCross = 2f;
+
+    private bool comboControl;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -28,6 +34,37 @@ public class PlayerController : MonoBehaviour
     {
         PlayerMove();
         UpdateAnimator();
+
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (isWalking == false && !comboControl)
+            {
+
+                //Iniciar o temporizador
+                StartCoroutine(CrossController());
+
+                if(punchCount < 2)
+                {
+                    PlayerJab();
+                    punchCount++;
+                    if (!comboControl)
+                    {
+
+                    }
+                }
+                else if (punchCount >= 2)
+                {
+                    PlayerCross();
+                    punchCount = 0;
+                }
+
+                //Parando o temporizador
+                StopCoroutine(CrossController());
+
+            }
+        }
+
     }
 
     private void FixedUpdate()
@@ -80,4 +117,24 @@ public class PlayerController : MonoBehaviour
         // Girar o sprite do player em 180 no eixo Y
         transform.Rotate(0, 180, 0);
     }
+
+    void PlayerJab()
+    {
+        //Acessa a animação do Jab
+        //Ativa o gatilho do ataque do Jab
+        playerAnimator.SetTrigger("isJab");
+    }
+    void PlayerCross()
+    {
+        playerAnimator.SetTrigger("isCross");
+    }
+
+    IEnumerator CrossController()
+    {
+        comboControl = true;
+        yield return new WaitForSeconds(timeCross);
+        punchCount = 0;
+        comboControl = false;
+    }
+
 }
