@@ -4,7 +4,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D playerRigidBody;
-    public float playerSpeed = 1f;
+    public float playerSpeed = 0.6f;
+    public float currentSpeed;
 
     public Vector2 playerDirection;
 
@@ -19,6 +20,9 @@ public class PlayerController : MonoBehaviour
 
     private bool comboControl;
 
+    // Indicar se o player esta morto
+    private bool isDead;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
         //Obtem e inicializa as propriedades do Animator
         playerAnimator = GetComponent<Animator>();
+
+        currentSpeed = playerSpeed;
     }
 
     // Update is called once per frame
@@ -35,11 +41,8 @@ public class PlayerController : MonoBehaviour
         PlayerMove();
         UpdateAnimator();
 
-
         if (Input.GetKeyDown(KeyCode.X))
         {
-            if (isWalking == false && !comboControl)
-            {
 
                 //Iniciar o temporizador
                 StartCoroutine(CrossController());
@@ -50,7 +53,7 @@ public class PlayerController : MonoBehaviour
                     punchCount++;
                     if (!comboControl)
                     {
-
+                    StartCoroutine(CrossController());
                     }
                 }
                 else if (punchCount >= 2)
@@ -62,7 +65,6 @@ public class PlayerController : MonoBehaviour
                 //Parando o temporizador
                 StopCoroutine(CrossController());
 
-            }
         }
 
     }
@@ -79,7 +81,8 @@ public class PlayerController : MonoBehaviour
             isWalking = false;
         }
 
-        playerRigidBody.MovePosition(playerRigidBody.position + playerSpeed * Time.fixedDeltaTime * playerDirection);
+        //playerRigidBody.MovePosition(playerRigidBody.position + playerSpeed * Time.fixedDeltaTime * playerDirection);
+        playerRigidBody.MovePosition(playerRigidBody.position + currentSpeed * Time.fixedDeltaTime * playerDirection);
 
     }
 
@@ -137,4 +140,13 @@ public class PlayerController : MonoBehaviour
         comboControl = false;
     }
 
+    void ZeroSpeed()
+    {
+        currentSpeed = 0;
+    }
+
+    void ResetSpeed()
+    {
+        currentSpeed = playerSpeed;
+    }
 }
