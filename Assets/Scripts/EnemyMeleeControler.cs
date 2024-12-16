@@ -34,6 +34,7 @@ public class EnemyMeleeControler : MonoBehaviour
     // Variaveis para mecanica de dano
     public int maxHealth;
     public int currentHealth;
+    public Sprite enemyImage;
 
     public float staggerTime = 0.5f;
     private float damageTime;
@@ -196,6 +197,9 @@ public class EnemyMeleeControler : MonoBehaviour
             currentHealth -= damage;
 
             animator.SetTrigger("HitDamage");
+
+            // Atualiza a UI do inimigo
+            FindFirstObjectByType<UIManager>().UpdateEnemyUI(maxHealth, currentHealth, enemyImage);
 
             if (currentHealth <= 0)
             {
